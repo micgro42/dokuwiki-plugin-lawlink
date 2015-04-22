@@ -3,7 +3,7 @@
  * DokuWiki Plugin lawlink (Syntax Component)
  *
  * @license GPL 2 http://www.gnu.org/licenses/gpl-2.0.html
- * @author  Michael Gro�e <mic.grosse@posteo.de>
+ * @author  Michael Große <mic.grosse@posteo.de>
  */
 
 // must be run within Dokuwiki
@@ -14,19 +14,19 @@ class syntax_plugin_lawlink_link extends DokuWiki_Syntax_Plugin {
      * @return string Syntax mode type
      */
     public function getType() {
-        return 'FIXME: container|baseonly|formatting|substition|protected|disabled|paragraphs';
+        return 'substition';
     }
     /**
      * @return string Paragraph type
      */
     public function getPType() {
-        return 'FIXME: normal|block|stack';
+        return 'normal';
     }
     /**
      * @return int Sort order - Low numbers go before high numbers
      */
     public function getSort() {
-        return FIXME;
+        return 300;
     }
 
     /**
@@ -35,13 +35,14 @@ class syntax_plugin_lawlink_link extends DokuWiki_Syntax_Plugin {
      * @param string $mode Parser mode
      */
     public function connectTo($mode) {
-        $this->Lexer->addSpecialPattern('<FIXME>',$mode,'plugin_lawlink_link');
-//        $this->Lexer->addEntryPattern('<FIXME>',$mode,'plugin_lawlink_link');
+        $this->Lexer->addSpecialPattern('~~Para.*?~~',$mode,'plugin_lawlink_link');
+        $this->Lexer->addSpecialPattern('~~Art\..*?~~',$mode,'plugin_lawlink_link');
+    //    $this->Lexer->addEntryPattern('~~§',$mode,'plugin_lawlink_link');
     }
 
-//    public function postConnect() {
-//        $this->Lexer->addExitPattern('</FIXME>','plugin_lawlink_link');
-//    }
+    //public function postConnect() {
+    //    $this->Lexer->addExitPattern('~~','plugin_lawlink_link');
+    //}
 
     /**
      * Handle matches of the lawlink syntax
@@ -54,7 +55,26 @@ class syntax_plugin_lawlink_link extends DokuWiki_Syntax_Plugin {
      */
     public function handle($match, $state, $pos, Doku_Handler &$handler){
         $data = array();
-
+        $matches = explode(' ',$match);
+        $link = 'http://www.gesetze-im-internet.de/';
+        if (end($matches) == '~~') {
+            array_pop($matches);
+        } else {
+            $matches[count($matches)-1] = trim($matches[count($matches)-1],'~');
+        }
+        $law = end($matches);
+        $link .= strtolower($law) . '/';
+        if ($matches[0] == '~~Art.') {
+            $link .= 'art_';
+            $matches[0] = 'Art.';
+        } else {
+            $link .= '__';
+            $matches[0] = '§';
+        }
+        $link .= $matches[1];
+        $link .= '.html';
+        $data[0] = $link;
+        $data[1] = implode(' ',$matches);
         return $data;
     }
 
@@ -68,7 +88,7 @@ class syntax_plugin_lawlink_link extends DokuWiki_Syntax_Plugin {
      */
     public function render($mode, Doku_Renderer &$renderer, $data) {
         if($mode != 'xhtml') return false;
-
+            $renderer->externallink($data[0],$data[1]);
         return true;
     }
 }
