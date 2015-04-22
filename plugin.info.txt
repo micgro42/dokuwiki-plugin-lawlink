@@ -1,0 +1,7 @@
+base   lawlink
+author Michael Groﬂe
+email  mic.grosse@posteo.de
+date   2015-04-22
+name   lawlink plugin
+desc   creates links to legal texts from text references
+url    https://dokuwiki.org/plugin:lawlink
