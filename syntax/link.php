@@ -35,6 +35,7 @@ class syntax_plugin_lawlink_link extends DokuWiki_Syntax_Plugin {
      * @param string $mode Parser mode
      */
     public function connectTo($mode) {
+        $this->Lexer->addSpecialPattern('~~§.*?~~',$mode,'plugin_lawlink_link');
         $this->Lexer->addSpecialPattern('~~Para.*?~~',$mode,'plugin_lawlink_link');
         $this->Lexer->addSpecialPattern('~~Art\..*?~~',$mode,'plugin_lawlink_link');
     //    $this->Lexer->addEntryPattern('~~§',$mode,'plugin_lawlink_link');
